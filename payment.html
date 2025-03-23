@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>FairTrade Services - Paiement</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap" rel="stylesheet">
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+  <header>
+    <div class="logo">FairTrade Services</div>
+    <nav>
+      <a href="index.html">Accueil</a>
+      <a href="offers.html">Offres</a>
+      <a href="about.html">À propos</a>
+      <a href="contact.html">Contact</a>
+      <a href="payment.html">Paiement</a>
+    </nav>
+  </header>
+  <section class="payment">
+    <h2>Paiement en ligne</h2>
+    <p>Procédez au paiement de votre pack en toute sécurité.</p>
+    <div id="pack-details"></div>
+    <button id="checkout-button" class="cta-btn">Payer avec Stripe (Test)</button>
+  </section>
+  <footer>
+    <p>Contact : contact@fairtrade-services.fr | FairTrade Services © 2025</p>
+  </footer>
+  <script>
+    // Extraction du paramètre "pack" de l'URL
+    function getParameterByName(name) {
+      name = name.replace(/[\\[\\]]/g, '\\$&');
+      var url = window.location.href;
+      var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+          results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\\+/g, ' '));
+    }
+
+    var pack = getParameterByName('pack') || 'none';
+    var packText = '';
+    if (pack === 'smart-support') {
+      packText = 'Pack Smart Support - 100 EUR';
+    } else if (pack === 'ecom-boost') {
+      packText = 'Pack E-com Boost - 350 EUR';
+    } else if (pack === 'ia-starter') {
+      packText = 'Pack IA Starter - 450 EUR';
+    } else if (pack === 'crm-light') {
+      packText = 'Pack CRM Light - 200 EUR';
+    } else {
+      packText = 'Aucun pack sélectionné';
+    }
+    document.getElementById('pack-details').innerHTML = '<p><strong>' + packText + '</strong></p>';
+
+    // Remplacez par votre clé publique Stripe en mode test
+    var stripe = Stripe('pk_test_YOUR_PUBLIC_KEY');
+    var checkoutButton = document.getElementById('checkout-button');
+    checkoutButton.addEventListener('click', function () {
+      var priceId = '';
+      if (pack === 'smart-support') {
+        priceId = 'price_1SmartSupportTest';
+      } else if (pack === 'ecom-boost') {
+        priceId = 'price_1EcomBoostTest';
+      } else if (pack === 'ia-starter') {
+        priceId = 'price_1IAStarterTest';
+      } else if (pack === 'crm-light') {
+        priceId = 'price_1CRMLightTest';
+      }
+      stripe.redirectToCheckout({
+        lineItems: [{price: priceId, quantity: 1}],
+        mode: 'payment',
+        successUrl: window.location.origin + '/success.html',
+        cancelUrl: window.location.origin + '/cancel.html'
+      })
+      .then(function (result) {
+        if (result.error) {
+          alert(result.error.message);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

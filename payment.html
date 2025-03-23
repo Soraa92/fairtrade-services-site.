@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>FairTrade Services - Paiement</title>
+  <link href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap" rel="stylesheet">
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    body { margin: 0; font-family: 'Poppins', sans-serif; background-color: #f9f9f9; color: #333; }
+    header { background-color: #1d3557; padding: 20px; color: #fff; }
+    .logo { font-size: 24px; font-weight: 600; }
+    nav { margin-top: 10px; }
+    nav a { color: #fff; text-decoration: none; margin-right: 20px; font-weight: 500; }
+    .payment { padding: 40px 20px; text-align: center; }
+    .payment h2 { color: #1d3557; font-size: 36px; }
+    .cta-btn {
+      background-color: #1d3557; color: #fff; padding: 15px 30px; border: none;
+      border-radius: 4px; font-size: 16px; cursor: pointer; text-decoration: none;
+    }
+    footer { background-color: #1d3557; color: #fff; text-align: center; padding: 20px; margin-top: 40px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">FairTrade Services</div>
+    <nav>
+      <a href="index.html">Accueil</a>
+      <a href="offers.html">Offres</a>
+      <a href="contact.html">Contact</a>
+      <a href="payment.html">Paiement</a>
+    </nav>
+  </header>
+
+  <section class="payment">
+    <h2>Paiement en ligne</h2>
+    <p>Procédez au paiement de votre prestation en toute sécurité.</p>
+    <button id="checkout-button" class="cta-btn">Payer avec Stripe</button>
+  </section>
+
+  <footer>
+    <p>Contact : contact@fairtrade-services.fr | FairTrade Services © 2025</p>
+  </footer>
+
+  <script>
+    // Remplacez par votre clé publique Stripe
+    var stripe = Stripe('pk_test_YOUR_PUBLIC_KEY');
+    var checkoutButton = document.getElementById('checkout-button');
+    checkoutButton.addEventListener('click', function () {
+      stripe.redirectToCheckout({
+        lineItems: [{price: 'price_YOUR_PRICE_ID', quantity: 1}],
+        mode: 'payment',
+        successUrl: window.location.protocol + '//' + window.location.host + '/success.html',
+        cancelUrl: window.location.protocol + '//' + window.location.host + '/cancel.html'
+      })
+      .then(function (result) {
+        if (result.error) {
+          alert(result.error.message);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
